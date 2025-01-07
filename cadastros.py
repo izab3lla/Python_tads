@@ -29,7 +29,7 @@ def cadastrar_aluno(nome, matricula, data_de_nascimento, sexo, endereco, telefon
 def cadastrar_professor(nome, matricula, data_de_nascimento, sexo, endereco, telefone, email, disciplina):
     nome = input("Nome do professor:")
     matricula = input("Matricula:")
-    data_de_nascimento = int(input("Data de nascimento:(dd/mm/aaaa)"))
+    data_de_nascimento = int(input("Data de nascimento(dd/mm/aaaa):"))
     sexo = validar_sexo()
     endereco = input("Endereco:")
     telefone = validar_telefone()
