@@ -1,3 +1,5 @@
+import re #Import do regex
+
 #Validacoes e cadastros#
 alunos = []
 professores = []
