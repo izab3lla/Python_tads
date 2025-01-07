@@ -13,7 +13,7 @@ def consultar_alunos():
 #professor#
 def consultar_professor():
    professor_consulta = input("Digite  a disciplina para saber os professores alocados nela:")
-   for disciplina in disciplina:
+   for disciplina in disciplinas:
       if  disciplina["nome"] == professor_consulta:
          print (f"Professores alocados na disciplina:{professor_consulta}")
          return
