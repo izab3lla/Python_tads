@@ -78,6 +78,18 @@ def cadastrar_turma(nome, codigo, disciplina, professor, alunos):
     }
     turmas.append(turma)
 
+#arrumar isso aquiiiii
+def matricular_alunos():
+    nome_do_aluno = input("Digite o nome do aluno:")
+    nome_da_turma = input("Digite a turma que deseja matricular o aluno:")
+
+    turma_existe = None
+    for turma in turmas:
+        if turma["nome"] == nome_da_turma:
+            turma_existe = turma
+            break
+    turma_existe["alunos"].append(nome_do_aluno)
+
 def validar_sexo():
     sexo = input("Digite o sexo (m/f):").lower() #se colocar maiusculo vai alterar aceitar tambem#
     if sexo == "m" or sexo == "f":
