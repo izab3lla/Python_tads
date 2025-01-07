@@ -82,4 +82,11 @@ def validar_sexo():
         return sexo
     else:
         print("Sexo invalido, tente novamente")
-    
+
+def filtrar_professor():
+    nome_disciplina = input("Digite o nome da disciplina:")
+
+    if nome_disciplina in disciplinas:
+        print(f"Professores alocados na disciplina {disciplinas[nome_disciplina]}")
+    else: 
+        print ("Nenhum professor encontrado, tente novamente!")
