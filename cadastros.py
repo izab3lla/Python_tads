@@ -6,7 +6,7 @@ professores = []
 disciplinas = []
 turmas = []
 
-def cadastrar_aluno(nome, matricula, data_de_nascimento, sexo, endereco, telefone, email):
+def cadastrar_aluno():
     nome = input("Nome do aluno:")
     matricula = input("Matricula:")
     data_de_nascimento = int(input("Data de nascimento:(dd/mm/aaaa)"))
@@ -26,7 +26,7 @@ def cadastrar_aluno(nome, matricula, data_de_nascimento, sexo, endereco, telefon
     }
     alunos.append(aluno)
 
-def cadastrar_professor(nome, matricula, data_de_nascimento, sexo, endereco, telefone, email, disciplina):
+def cadastrar_professor():
     nome = input("Nome do professor:")
     matricula = input("Matricula:")
     data_de_nascimento = int(input("Data de nascimento(dd/mm/aaaa):"))
@@ -48,7 +48,7 @@ def cadastrar_professor(nome, matricula, data_de_nascimento, sexo, endereco, tel
     }
     professores.append(professor)
 
-def cadastrar_disciplina(nome, codigo, carga_horaria, professor):
+def cadastrar_disciplina():
     nome = input("Nome da disciplina:")
     codigo = input("Digite o codigo:")
     carga_horaria = int(input("Digite a carga horaria:"))
@@ -62,7 +62,7 @@ def cadastrar_disciplina(nome, codigo, carga_horaria, professor):
     }
     disciplinas.append(disciplina)
 
-def cadastrar_turma(nome, codigo, disciplina, professor, alunos):
+def cadastrar_turma():
     nome = input("Nome da disciplina:")
     codigo = input("Digite o codigo:")
     disciplina = input("Digite a disciplina:")
