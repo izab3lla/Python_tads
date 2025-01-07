@@ -9,3 +9,13 @@ def consultar_alunos():
             print(f"{aluno}")
          return
     print ("Turma nao encontrada, tente novamente!")
+
+#professor#
+def consultar_professor():
+   professor_consulta = input("Digite  a disciplina para saber os professores alocados nela:")
+   for disciplina in disciplina:
+      if  disciplina["nome"] == professor_consulta:
+         print (f"Professores alocados na disciplina:{professor_consulta}")
+         return
+      else:
+         print("Nenhum professor alocado para esta disciplina, tente novamente!")
