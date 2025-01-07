@@ -83,6 +83,14 @@ def validar_sexo():
     else:
         print("Sexo invalido, tente novamente")
 
+def validar_telefone():
+    padrao = r"^\(\d{2}\) \d{5}-\d{4}$"
+    while True:
+        telefone = input("Insira o numero telefone ((dd)xxxxx-xxxxx):")
+        if not re.match(padrao, telefone):
+            print("Numero de telefone invalido, tente novamente!")
+            break
+
 def filtrar_professor():
     nome_disciplina = input("Digite o nome da disciplina:")
 
