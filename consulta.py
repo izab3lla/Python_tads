@@ -19,3 +19,15 @@ def consultar_professor():
          return
       else:
          print("Nenhum professor alocado para esta disciplina, tente novamente!")
+
+#disciplina#
+def consultar_disciplina():
+    turmas_por_disciplinas = input("Digite a turma que deseja saber as disciplinas ofertadas:")
+    for turma in turmas:
+       if turma["nome"] == turmas_por_disciplinas:
+          print(f"As disciplinas ofertadas na turma {turmas_por_disciplinas}:")
+          for disciplina in turma["disciplina"]:
+             print(f"- {disciplina}")
+          return
+    else:
+       print("Turma nao encontrada, tente novamente!")
