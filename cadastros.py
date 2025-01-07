@@ -90,6 +90,15 @@ def matricular_alunos():
             break
     turma_existe["alunos"].append(nome_do_aluno)
 
+    #alocacao de professor
+def alocar_professor():
+    nome_professor = input("Digite  o nome do professor a ser alocado: ")
+    nome_disciplina = input("Digite o nome da disciplina:")
+    for disciplina in disciplinas:
+        if disciplina["nome"] == nome_disciplina:
+            disciplina["professor"] = nome_professor
+    print(f"Professor foi alocado na disciiplina {nome_disciplina} com sucesso!")
+
 def validar_sexo():
     sexo = input("Digite o sexo (m/f):").lower() #se colocar maiusculo vai alterar aceitar tambem#
     if sexo == "m" or sexo == "f":
