@@ -2,11 +2,9 @@ class SaldoInsuficienteError(Exception):
     #Erro quando o saque é maior que o saldo disponível."""
     pass
 
-
 class LimiteExcedidoError(Exception):
     #Erro quando o saque ultrapassa o limite permitido."""
     pass
-
 
 class ValorInvalidoError(Exception):
     #Erro quando o valor informado é negativo, zero ou não numérico."""
@@ -31,17 +29,5 @@ class PrazoNaoVencidoError(Exception):
 class SaldoInsuficienteParaManutencaoError(Exception):
     #Erro quando o saldo é insuficiente para cobrança de taxa de manutenção."""
     pass    
-
-class AniversarioNaoCoincideError(Exception):
-    #Erro quando o dia do aniversário não coincide com a data atual."""
-    pass
-
-class DataPagamentoInvalidaError(Exception):
-    #Erro quando a data de pagamento é inválida."""
-    pass    
-
-class ParcelaInvalidaError(Exception):
-    #Erro quando o valor da parcela é inválido."""
-    pass     
 
 # =========================

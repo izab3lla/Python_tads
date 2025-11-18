@@ -1,6 +1,7 @@
 import uuid
 from typing import List
 from datetime import datetime
+from excecoes import SaldoInsuficienteError, LimiteExcedidoError, ValorInvalidoError
 
 # =========================
 # Classe Endereco 
@@ -89,7 +90,6 @@ class Banco:
         self.__nome = nome
         # inicializo como lista vazia (agências serão adicionadas com método)
         self.__agencia = []
-
         self.contas = []
         self.funcionarios = []
 
@@ -361,19 +361,19 @@ class Conta:
     def sacar(self, valor: float):
         # adicionada verificação básica de saldo e registro de transação
         if valor <= 0:
-            return False
-        if self._saldo >= valor:
-            self._saldo -= valor
-            self._transacoes.append(Transacao("Saque", valor, self))
-            return True
-        else:
-            # saldo insuficiente
-            return False
+            raise ValorInvalidoError("Valor do saque deve ser maior que zero.") # lança exceção
+
+        if valor > self._saldo:
+            raise SaldoInsuficienteError("Saldo insuficiente para saque.") # lança exceção
+
+        self._saldo -= valor
+        self._transacoes.append(Transacao("Saque", valor, self))
+        return True
 
     def depositar(self, valor: float):
         # adicionada verificação básica e registro de transação
         if valor <= 0:
-            return False
+            raise ValorInvalidoError("Valor de depósito inválido.") # lança exceção
         self._saldo += valor
         self._transacoes.append(Transacao("Depósito", valor, self))
         return True
@@ -392,7 +392,7 @@ class Conta:
         print("------------------")
 
         if len(self._transacoes) == 0:
-            print("Nenhuma movimentação.")
+            print("Nenhuma transação realizada.")
         else:
             for t in self._transacoes:
                 print(f"{t.data} | {t.tipo} | R${t.valor:.2f}")
@@ -431,8 +431,7 @@ class Conta_Corrente(Conta):
             self._saldo -= self._tx_manutencao
             self._transacoes.append(Transacao("Taxa Manutenção", self._tx_manutencao, self))
             return True
-        return False
-
+        raise SaldoInsuficienteError("Saldo insuficiente para cobrança de taxa de manutenção.")
 
 # =========================
 # Conta Poupança
@@ -475,7 +474,7 @@ class Conta_poupanca(Conta):
             self._saldo += valor  # se sim adiciona ao saldo
             self._transacoes.append(Transacao("Aplicação", valor, self))
             return True
-        return False
+        raise ValorInvalidoError("Valor de aplicação inválido.")  # lança exceção
 
 
 # =========================
@@ -539,7 +538,7 @@ class Emprestimo:
         n = self._prazo  # número de parcelas
 
         if n == 0:
-            return 0
+            raise ValorInvalidoError("Prazo do empréstimo deve ser maior que zero.")
 
         if i == 0:
             # se a taxa de juros for 0, parcela é valor dividido pelo número de parcelas
