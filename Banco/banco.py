@@ -3,7 +3,7 @@ from typing import List
 from datetime import datetime
 
 # =========================
-# Classe Endereco (mantida)
+# Classe Endereco 
 # =========================
 class Endereco:
     def __init__(self, rua: str, bairro: str, cidade: str, estado: str, cep: str):
@@ -50,11 +50,10 @@ class Endereco:
 
 
 # =========================
-# Classe Pessoa (adicionada)
+# Classe Pessoa 
 # =========================
 class Pessoa:
     def __init__(self, id: str, cpf: str, nome: str):
-        # uso de atributos com 1 underline (seguindo seu estilo)
         self._id = id
         self._cpf = cpf
         self._nome = nome
@@ -86,7 +85,6 @@ class Pessoa:
 # =========================
 class Banco:
     def __init__(self, cnpj: str, nome: str, agencia: str):
-        # atributo privado com __
         self.__cnpj = cnpj
         self.__nome = nome
         # inicializo como lista vazia (agências serão adicionadas com método)
@@ -100,7 +98,6 @@ class Banco:
         return self.__cnpj
     @cnpj.setter
     def cnpj(self, value):
-        # corrigi para setar o atributo privado, evitando recursão
         self.__cnpj = value
 
     @property
@@ -108,7 +105,6 @@ class Banco:
         return self.__nome
     @nome.setter
     def nome(self, value):
-        # corrigi para setar o atributo privado, evitando recursão
         self.__nome = value
 
     @property
@@ -116,14 +112,13 @@ class Banco:
         return self.__agencia
     @agencia.setter
     def agencia(self, value):
-        # corrigi para atribuir corretamente à lista de agências
         self.__agencia = value
 
     def adicionar_agencia(self, agencia):
         # append na lista privada de agências
         self.__agencia.append(agencia)
 
-    # método auxiliar que cria e adiciona agência (opcional)
+    # método auxiliar que cria e adiciona agência 
     def criar_e_adicionar_agencia(self, numero: str, nome: str, endereco: str, fone: str):
         a = Agencia(numero, nome, endereco, fone)
         self.adicionar_agencia(a)
@@ -174,7 +169,7 @@ class Agencia:
     def adicionar_conta(self, conta: 'Conta'):  # referência futura aceita como string
         self._conta.append(conta)
 
-    # buscar conta pela número (útil)
+    # buscar conta pela número 
     def buscar_conta(self, numero: str):
         for c in self._conta:
             if c.numero == numero:
@@ -183,7 +178,7 @@ class Agencia:
 
 
 # =========================
-# Classe Cliente (herda Pessoa corretamente)
+# Classe Cliente 
 # =========================
 class Cliente(Pessoa):
     def __init__(self, id: str, cpf: str, nome: str, email: str, data_nascimento: str):
@@ -196,7 +191,7 @@ class Cliente(Pessoa):
     # note: reuso os atributos da superclasse (self._nome, self._id, self._cpf)
     @property  # transforma método em propriedade
     def nome(self):
-        # retorna nome vindo de Pessoa (_nome)
+        # retorna nome vindo de Pessoa
         return self._nome
 
     @nome.setter
@@ -210,7 +205,6 @@ class Cliente(Pessoa):
 
     @id.setter
     def id(self, id):
-        # corrigi recursão
         self._id = id
 
     @property
@@ -219,7 +213,6 @@ class Cliente(Pessoa):
 
     @cpf.setter
     def cpf(self, cpf):
-        # corrigi recursão
         self._cpf = cpf
 
     @property
@@ -231,12 +224,11 @@ class Cliente(Pessoa):
         self.__email = email
 
     def __str__(self):
-        # usa _nome e _cpf herdados corretamente
         return f"Cliente: {self._nome} | CPF: {self._cpf} | Email: {self.__email}"
 
 
 # =========================
-# Classe Funcionario (herda Pessoa corretamente)
+# Classe Funcionario 
 # =========================
 class Funcionario(Pessoa):
     def __init__(self, id: str, cpf: str, nome: str, matricula: str, dt_nasc: str):
@@ -321,12 +313,12 @@ class Transacao:
 
 
 # =========================
-# Classe Conta (base)
+# Classe Conta 
 # =========================
 class Conta:
     def __init__(self, numero: str, titular: str, saldo: float, senha: str):
         self._numero = numero
-        self._titular = titular  # mantive seu comentário
+        self._titular = titular  
         self._saldo = saldo
         self._senha = senha
         # inicialização correta da lista de transações
@@ -369,7 +361,6 @@ class Conta:
     def sacar(self, valor: float):
         # adicionada verificação básica de saldo e registro de transação
         if valor <= 0:
-            # valor inválido
             return False
         if self._saldo >= valor:
             self._saldo -= valor
@@ -411,10 +402,9 @@ class Conta:
 
 
 # =========================
-# Conta Corrente (filha)
+# Conta Corrente
 # =========================
 class Conta_Corrente(Conta):
-    # mantive sua assinatura (pwd antes do saldo) mas corrigi o super para a ordem correta
     def __init__(self, numero: str, titular: str, pwd: str, saldo: float, limite: float):
         # Conta espera: numero, titular, saldo, senha
         # aqui passamos saldo primeiro e depois pwd como senha
@@ -436,8 +426,7 @@ class Conta_Corrente(Conta):
     def tx_manutencao(self, value):
         self._tx_manutencao = value
 
-    # Exemplo simples: aplicar taxa de manutenção mensal
-    def cobrar_manutencao(self):
+    def cobrar_manutencao(self): # cobra a taxa de manutenção se houver saldo suficiente
         if self._saldo >= self._tx_manutencao:
             self._saldo -= self._tx_manutencao
             self._transacoes.append(Transacao("Taxa Manutenção", self._tx_manutencao, self))
@@ -446,10 +435,9 @@ class Conta_Corrente(Conta):
 
 
 # =========================
-# Conta Poupança (filha)
+# Conta Poupança
 # =========================
 class Conta_poupanca(Conta):
-    # mantive assinatura parecida (pwd antes do saldo) e corrigi o super
     def __init__(self, numero: str, titular: str, pwd: str, saldo: float, tx_juros: float):
         # Conta espera: numero, titular, saldo, senha
         super().__init__(numero, titular, saldo, pwd)
@@ -471,7 +459,6 @@ class Conta_poupanca(Conta):
         self._aniversario = value
 
     def sacar(self, valor: float):
-        # reuso lógica de Conta (sem checar limite específico aqui)
         return super().sacar(valor)
 
     def render_juros(self):  # verifica se é dia de aniversario e aplica os juros
@@ -500,8 +487,7 @@ class Emprestimo:
         self._taxa_juros = taxa_juros
         self._prazo = prazo
         self._conta = conta
-        # corrigi para chamar a função datetime.now()
-        self._data_transa = datetime.now()
+        self._data_transacao = datetime.now()
         # calcula parcela ao criar
         self._valor_parcela = self.calcular_parcela()
 
@@ -534,11 +520,11 @@ class Emprestimo:
         self._conta = value
 
     @property
-    def data_transa(self):
-        return self._data_transa
-    @data_transa.setter
-    def data_transa(self, value):
-        self._data_transa = value
+    def data_transacao(self):
+        return self._data_transacao
+    @data_transacao.setter
+    def data_transacao(self, value):
+        self._data_transacao = value
 
     @property
     def valor_parcela(self):
@@ -564,7 +550,7 @@ class Emprestimo:
 
 
 # =========================
-# Testes básicos (ajustados)
+# Testes básicos
 # =========================
 
 # criando clientes (uso correto da herança Pessoa)
@@ -584,7 +570,6 @@ print(Funcionario_a.nome)
 print(Funcionario_a.id)
 
 # agora com parâmetros CORRETOS para as contas
-# (lembrando: assinatura Conta_Corrente(numero, titular, pwd, saldo, limite))
 Conta_coco_1 = Conta_Corrente("001", "xyz", "senha123", 1000.0, 500.0)
 conta_poup_1 = Conta_poupanca("3245", "abc", "senha999", 300.0, 0.01)
 
