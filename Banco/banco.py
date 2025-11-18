@@ -293,10 +293,25 @@ class Conta:
         self.saldo += valor
     
     def extrato(self):
-        pass
-    
+        lista = []
+        for t in self._transacoes:
+            lista.append(f"{t.data} - {t.tipo} - R${t.valor:.2f}")
+        return lista
+        
     def print_extrato(self):
-        pass
+        print("==== EXTRATO ====")
+        print(f"Conta: {self._numero}")
+        print(f"Titular: {self._titular}")
+        print("------------------")
+
+        if len(self._transacoes) == 0:
+            print("Nenhuma movimentação.")
+        else:
+            for t in self._transacoes:
+                print(f"{t.data} | {t.tipo} | R${t.valor:.2f}")
+
+        print("------------------")
+        print(f"Saldo atual: R${self._saldo:.2f}")
 
 class Conta_Corrente(Conta):
     def __init__(self, numero: str, titular: str, pwd: float, saldo:float, limite:float):
@@ -343,10 +358,17 @@ class Conta_poupanca(Conta):
         self.saldo -= valor
 
     def render_juros(self):
-        pass
+        hoje = datetime.now().day 
+        if hoje == self._aniversario:
+            rendimento = self._saldo * self._tx_juros
+            self._saldo += rendimento
+            return rendimento
+        return 0
     
     def aplicar (self, valor: float):
-        pass
+        if valor > 0:
+            self._saldo += valor
+            self._transacoes.append(Transacao("Aplicação", valor, self))
 
 class Emprestimo:
     def __init__(self, valor: float, taxa_juros: float, prazo: int, conta: Conta):
