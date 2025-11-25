@@ -1,5 +1,5 @@
 from banco import Conta_Corrente
-from excecoes import ValorInvalidoError, SaldoInsuficienteError, SenhaInvalidaError
+from excecoes import ValorInvalidoException, SaldoInsuficienteException, SenhaInvalidaException
 
 def menu():
     # Criando uma conta de exemplo para os testes
@@ -10,8 +10,8 @@ def menu():
     senha = input("Digite sua senha: ") #pede a senha
     try:
         if not conta.autenticar(senha): #autentica a senha
-            raise SenhaInvalidaError("Senha incorreta.") #levanta exceção se a senha estiver incorreta
-    except SenhaInvalidaError as e: # captura a exceção
+            raise SenhaInvalidaException("Senha incorreta.") #levanta exceção se a senha estiver incorreta
+    except SenhaInvalidaException as e: # captura a exceção
         print(e) # exibe a mensagem de erro
         return
 #######################################################################
@@ -41,9 +41,9 @@ def menu():
 
             except ValueError:
                 print("Valor inválido! Digite um número.") # captura erro de conversão
-            except ValorInvalidoError as e: # captura erro de valor inválido
+            except ValorInvalidoException as e: # captura erro de valor inválido
                 print(f"Erro: {e}") # exibe a mensagem de erro
-            except SaldoInsuficienteError as e: # captura erro de saldo insuficiente
+            except SaldoInsuficienteException as e: # captura erro de saldo insuficiente
                 print(f"Erro: {e}") # exibe a mensagem de erro
 
         elif op == 2:
@@ -55,7 +55,7 @@ def menu():
 
             except ValueError: 
                 print("Valor inválido! Digite um número.") # captura erro de conversão
-            except ValorInvalidoError as e: # captura erro de valor inválido
+            except ValorInvalidoException as e: # captura erro de valor inválido
                 print(f"Erro: {e}") # exibe a mensagem de erro
 
         elif op == 3:

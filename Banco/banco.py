@@ -1,7 +1,6 @@
-import uuid
-from typing import List
+import hashlib
 from datetime import datetime
-from excecoes import SaldoInsuficienteError, LimiteExcedidoError, ValorInvalidoError
+from excecoes import SaldoInsuficienteException, LimiteExcedidoException, ValorInvalidoException, SaldoInsuficienteParaManutencaoException
 
 # =========================
 # Classe Endereco 
@@ -319,8 +318,11 @@ class Conta:
     def __init__(self, numero: str, titular: str, saldo: float, senha: str):
         self._numero = numero
         self._titular = titular  
+        if saldo < 0:
+            raise ValorInvalidoException("Saldo inicial inválido.")
         self._saldo = saldo
-        self._senha = senha
+        # armazenar senha como hash para não manter senha em texto claro
+        self._senha_hash = self._hash_pwd(senha)
         # inicialização correta da lista de transações
         self._transacoes = []
 
@@ -347,24 +349,31 @@ class Conta:
 
     @property
     def senha(self):
-        return self._senha
+        # não retornar a senha em texto claro
+        return "<oculta>"
     @senha.setter
     def senha(self, value):
-        self._senha = value
+        self._senha_hash = self._hash_pwd(value)
+
+    def _hash_pwd(self, pwd: str) -> str:
+        """Retorna o hash SHA-256 da senha passada."""
+        if pwd is None:
+            return ""
+        return hashlib.sha256(pwd.encode("utf-8")).hexdigest()
 
     def add_transacao(self, transacao: Transacao):
         self._transacoes.append(transacao)
 
     def autenticar(self, pwd: str) -> bool:
-        return self._senha == pwd
+        return self._senha_hash == self._hash_pwd(pwd)
 
     def sacar(self, valor: float):
         # adicionada verificação básica de saldo e registro de transação
-        if valor <= 0:
-            raise ValorInvalidoError("Valor do saque deve ser maior que zero.") # lança exceção
+        if not isinstance(valor, (int, float)) or valor <= 0:
+            raise ValorInvalidoException("Valor do saque deve ser maior que zero.") # lança exceção
 
         if valor > self._saldo:
-            raise SaldoInsuficienteError("Saldo insuficiente para saque.") # lança exceção
+            raise SaldoInsuficienteException("Saldo insuficiente para saque.") # lança exceção
 
         self._saldo -= valor
         self._transacoes.append(Transacao("Saque", valor, self))
@@ -372,8 +381,8 @@ class Conta:
 
     def depositar(self, valor: float):
         # adicionada verificação básica e registro de transação
-        if valor <= 0:
-            raise ValorInvalidoError("Valor de depósito inválido.") # lança exceção
+        if not isinstance(valor, (int, float)) or valor <= 0:
+            raise ValorInvalidoException("Valor de depósito inválido.") # lança exceção
         self._saldo += valor
         self._transacoes.append(Transacao("Depósito", valor, self))
         return True
@@ -382,8 +391,11 @@ class Conta:
         lista = []
         for t in self._transacoes:
             # usei propriedades de Transacao (data, tipo, valor)
-            lista.append(f"{t.data} - {t.tipo} - R${t.valor:.2f}")
+            lista.append(f"{t.data.strftime('%Y-%m-%d %H:%M:%S')} - {t.tipo} - R${t.valor:.2f}")
         return lista
+
+    def __repr__(self):
+        return f"<Conta numero={self._numero} titular={self._titular} saldo={self._saldo:.2f}>"
 
     def print_extrato(self):
         print("==== EXTRATO ====")
@@ -395,10 +407,25 @@ class Conta:
             print("Nenhuma transação realizada.")
         else:
             for t in self._transacoes:
-                print(f"{t.data} | {t.tipo} | R${t.valor:.2f}")
+                print(f"{t.data.strftime('%Y-%m-%d %H:%M:%S')} | {t.tipo} | R${t.valor:.2f}")
 
         print("------------------")
         print(f"Saldo atual: R${self._saldo:.2f}")
+
+    def transferir(self, valor: float, destino: 'Conta') -> bool:
+        """Transfere valor para outra conta, verificando saldo e limite (se houver)."""
+        if valor <= 0:
+            raise ValorInvalidoException("Valor de transferência inválido.")
+
+        total_disponivel = self._saldo + getattr(self, '_limite', 0)
+        if valor > total_disponivel:
+            raise LimiteExcedidoException("Limite insuficiente para transferência.")
+
+        self._saldo -= valor
+        destino._saldo += valor
+        self._transacoes.append(Transacao("Transferência enviada", valor, self))
+        destino._transacoes.append(Transacao("Transferência recebida", valor, destino))
+        return True
 
 
 # =========================
@@ -407,8 +434,10 @@ class Conta:
 class Conta_Corrente(Conta):
     def __init__(self, numero: str, titular: str, pwd: str, saldo: float, limite: float):
         # Conta espera: numero, titular, saldo, senha
-        # aqui passamos saldo primeiro e depois pwd como senha
+        # Aqui a ordem é: numero, titular, senha, saldo, limite
         super().__init__(numero, titular, saldo, pwd)
+        if limite < 0:
+            raise ValorInvalidoException("Limite inválido.")
         self._limite = limite
         self._tx_manutencao = 10.0
 
@@ -431,7 +460,7 @@ class Conta_Corrente(Conta):
             self._saldo -= self._tx_manutencao
             self._transacoes.append(Transacao("Taxa Manutenção", self._tx_manutencao, self))
             return True
-        raise SaldoInsuficienteError("Saldo insuficiente para cobrança de taxa de manutenção.")
+        raise SaldoInsuficienteParaManutencaoException("Saldo insuficiente para cobrança de taxa de manutenção.")
 
 # =========================
 # Conta Poupança
@@ -474,8 +503,7 @@ class Conta_poupanca(Conta):
             self._saldo += valor  # se sim adiciona ao saldo
             self._transacoes.append(Transacao("Aplicação", valor, self))
             return True
-        raise ValorInvalidoError("Valor de aplicação inválido.")  # lança exceção
-
+        raise ValorInvalidoException("Valor de aplicação inválido.")  # lança exceção
 
 # =========================
 # Classe Emprestimo
@@ -538,7 +566,7 @@ class Emprestimo:
         n = self._prazo  # número de parcelas
 
         if n == 0:
-            raise ValorInvalidoError("Prazo do empréstimo deve ser maior que zero.")
+            raise ValorInvalidoException("Prazo do empréstimo deve ser maior que zero.")
 
         if i == 0:
             # se a taxa de juros for 0, parcela é valor dividido pelo número de parcelas
@@ -547,47 +575,3 @@ class Emprestimo:
         parcela = self._valor * (i * (1 + i) ** n) / ((1 + i) ** n - 1)  # fórmula da parcela mensal
         return parcela
 
-
-# =========================
-# Testes básicos
-# =========================
-
-# criando clientes (uso correto da herança Pessoa)
-cliente_x = Cliente("a43v", "435.542.543-65", "xyz", "a@gmail.com", "10/03/2004")
-print(cliente_x.nome)
-print(cliente_x.id)
-print(cliente_x.cpf)
-print(cliente_x.email)
-print("\n")
-
-cliente_y = Cliente("43c24", "764.765.423-65", "abc", "y@gmail.com", "43/07/1990")
-print(cliente_y.nome)
-print(cliente_y.id)
-
-Funcionario_a = Funcionario("a324b", "098.987.875-45", "cleber", "3434", "28/05/1990")
-print(Funcionario_a.nome)
-print(Funcionario_a.id)
-
-# agora com parâmetros CORRETOS para as contas
-Conta_coco_1 = Conta_Corrente("001", "xyz", "senha123", 1000.0, 500.0)
-conta_poup_1 = Conta_poupanca("3245", "abc", "senha999", 300.0, 0.01)
-
-# operações básicas para testar transações
-Conta_coco_1.depositar(200.0)
-Conta_coco_1.sacar(50.0)
-conta_poup_1.aplicar(100.0)
-rendimento = conta_poup_1.render_juros()  # só aplicará no dia correto
-
-# criação do banco e agência
-banc_1 = Banco("11.222.333/0001-11", "Banco XPTO", "0001")
-ag = banc_1.criar_e_adicionar_agencia("0001", "Agencia Central", "Rua A, 123", "9999-0000")
-ag.adicionar_conta(Conta_coco_1)
-ag.adicionar_conta(conta_poup_1)
-
-# ver extrato
-Conta_coco_1.print_extrato()
-conta_poup_1.print_extrato()
-
-# empréstimo teste
-emp = Emprestimo(10000.0, 0.02, 12, Conta_coco_1)
-print(f"Parcela mensal: R${emp.valor_parcela:.2f}")
