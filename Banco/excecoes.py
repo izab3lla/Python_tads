@@ -22,10 +22,6 @@ class OperacaoNaoPermitidaException(Exception):
     """Erro quando a operação não é permitida."""
     pass
 
-class PrazoNaoVencidoException(Exception):
-    """Erro quando o prazo do empréstimo não foi vencido."""
-    pass        
-
 class SaldoInsuficienteParaManutencaoException(Exception):
     """Erro quando o saldo é insuficiente para cobrança de taxa de manutenção."""
     pass

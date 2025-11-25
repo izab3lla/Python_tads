@@ -1,6 +1,6 @@
 import hashlib
 from datetime import datetime
-from excecoes import SaldoInsuficienteException, LimiteExcedidoException, ValorInvalidoException, SaldoInsuficienteParaManutencaoException
+from excecoes import SaldoInsuficienteException, LimiteExcedidoException, ValorInvalidoException, SaldoInsuficienteParaManutencaoException, OperacaoNaoPermitidaException
 
 # =========================
 # Classe Endereco 
@@ -367,7 +367,9 @@ class Conta:
     def autenticar(self, pwd: str) -> bool:
         return self._senha_hash == self._hash_pwd(pwd)
 
-    def sacar(self, valor: float):
+    def sacar(self, valor: float, senha: str):
+        if not self.autenticar(senha):
+            raise OperacaoNaoPermitidaException("Senha inválida, operação não permitida.")
         # adicionada verificação básica de saldo e registro de transação
         if not isinstance(valor, (int, float)) or valor <= 0:
             raise ValorInvalidoException("Valor do saque deve ser maior que zero.") # lança exceção
