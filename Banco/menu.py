@@ -67,7 +67,3 @@ def menu():
 
         else:
             print('Ops, digite uma opcao valida')
-
-
-if __name__ == "__main__":
-    menu()
