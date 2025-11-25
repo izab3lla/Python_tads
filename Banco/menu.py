@@ -3,6 +3,7 @@ from excecoes import ValorInvalidoError, SaldoInsuficienteError, SenhaInvalidaEr
 
 def menu():
     # Criando uma conta de exemplo para os testes
+    #numero da conta, titular, senha, saldo inicial, limite de saque
     conta = Conta_Corrente("001", "Fulano", "1234", 500, 200)
     # autenticação da conta
     print("===== LOGIN =====")
@@ -16,7 +17,7 @@ def menu():
 #######################################################################
 
     while True:  
-        print('\n############# BEM VINDO AO MENU DE OPERACOES ############\n')
+        print('\n#############OLÁ, nome BEM VINDO AO MENU DE OPERACOES ############\n')
         print('1 - Sacar')
         print('2 - Depositar')
         print('3 - Extrato')
