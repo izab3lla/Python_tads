@@ -17,7 +17,7 @@ def menu():
 #######################################################################
 
     while True:  
-        print('\n#############OLÁ, nome BEM VINDO AO MENU DE OPERACOES ############\n')
+        print('\n############# BEM VINDO AO MENU DE OPERACOES ############\n')
         print('1 - Sacar')
         print('2 - Depositar')
         print('3 - Extrato')
